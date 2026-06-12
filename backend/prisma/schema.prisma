@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  username  String  @unique
+  email     String  @unique
+  password  String
+  role      String  @default("user") // "user" or "admin"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  watchHistory WatchHistory[]
+  myList       MyList[]
+}
+
+model Movie {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String  @db.Text
+  posterUrl   String
+  backdropUrl String?
+  releaseYear Int
+  genre       String  // Can be comma-separated or use relation table
+  rating      Float
+  trailerUrl  String?
+  tmdbId      Int?    @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  watchHistory WatchHistory[]
+  myList       MyList[]
+  cast         CastMember[]
+  similar      MovieSimilarity[] @relation("movieToSimilar")
+  similarMovies MovieSimilarity[] @relation("similarToMovie")
+}
+
+model TVSeries {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String  @db.Text
+  posterUrl   String
+  backdropUrl String?
+  seasons     Int
+  genre       String
+  rating      Float
+  tmdbId      Int?    @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CastMember {
+  id        Int     @id @default(autoincrement())
+  name      String
+  character String
+  image     String?
+  movieId   Int
+  movie     Movie   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model MovieSimilarity {
+  id              Int @id @default(autoincrement())
+  movieId         Int
+  movie           Movie @relation("movieToSimilar", fields: [movieId], references: [id], onDelete: Cascade)
+  similarMovieId  Int
+  similarMovie    Movie @relation("similarToMovie", fields: [similarMovieId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+
+  @@unique([movieId, similarMovieId])
+}
+
+model WatchHistory {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movieId   Int
+  movie     Movie   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  watchedAt DateTime @default(now())
+
+  @@unique([userId, movieId])
+}
+
+model MyList {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movieId   Int
+  movie     Movie   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  addedAt   DateTime @default(now())
+
+  @@unique([userId, movieId])
+}

@@ -1,0 +1,219 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  CREATOR
+  ADMIN
+}
+
+enum VideoQuality {
+  P240
+  P360
+  P480
+  P720
+  P1080
+  P1440
+  P4K
+}
+
+enum ProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  username       String    @unique
+  password       String
+  role           Role      @default(USER)
+  avatarUrl      String?
+  bio            String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  watchHistory   WatchHistory[]
+  myList         MyList[]
+  reviews        Review[]
+  comments       Comment[]
+  uploadedVideos Video[]   @relation("CreatorVideos")
+  downloads      Download[]
+  followers      Follow[]  @relation("Follower")
+  following      Follow[]  @relation("Following")
+}
+
+model Follow {
+  id          Int      @id @default(autoincrement())
+  followerId  Int
+  follower    User     @relation("Follower", fields: [followerId], references: [id])
+  followingId Int
+  following   User     @relation("Following", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Video {
+  id               Int       @id @default(autoincrement())
+  title            String
+  description      String    @db.Text
+  type             String    // "MOVIE", "EPISODE"
+  posterUrl        String?
+  backdropUrl      String?
+  trailerUrl       String?
+  releaseYear      Int?
+  rating           Float     @default(0)
+  durationMinutes  Int?
+  tmdbId           Int?      @unique
+  
+  // Streaming Assets
+  hlsManifestUrl   String?
+  dashManifestUrl  String?
+  originalFileUrl  String?   // Authorized downloads
+  
+  // Processing state
+  processingStatus ProcessingStatus @default(PENDING)
+  
+  creatorId        Int?
+  creator          User?     @relation("CreatorVideos", fields: [creatorId], references: [id])
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  seriesId         Int?
+  series           Series?   @relation(fields: [seriesId], references: [id])
+  seasonNumber     Int?
+  episodeNumber    Int?
+
+  genres           VideoGenre[]
+  cast             CastMember[]
+  watchHistory     WatchHistory[]
+  myList           MyList[]
+  reviews          Review[]
+  downloads        Download[]
+}
+
+model Series {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String    @db.Text
+  posterUrl   String?
+  backdropUrl String?
+  rating      Float     @default(0)
+  tmdbId      Int?      @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  episodes    Video[]
+  genres      SeriesGenre[]
+}
+
+model Genre {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  
+  videos      VideoGenre[]
+  series      SeriesGenre[]
+}
+
+model VideoGenre {
+  videoId     Int
+  genreId     Int
+  video       Video     @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  genre       Genre     @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([videoId, genreId])
+}
+
+model SeriesGenre {
+  seriesId    Int
+  genreId     Int
+  series      Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  genre       Genre     @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([seriesId, genreId])
+}
+
+
+model CastMember {
+  id          Int       @id @default(autoincrement())
+  name        String
+  character   String
+  imageUrl    String?
+  videoId     Int
+  video       Video     @relation(fields: [videoId], references: [id], onDelete: Cascade)
+}
+
+model WatchHistory {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videoId     Int
+  video       Video     @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  progressSec Int       @default(0) // Seconds watched
+  completed   Boolean   @default(false)
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, videoId])
+}
+
+model MyList {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videoId     Int
+  video       Video     @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  addedAt     DateTime  @default(now())
+
+  @@unique([userId, videoId])
+}
+
+model Review {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videoId     Int
+  video       Video     @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  rating      Int       // 1 to 5
+  content     String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  comments    Comment[]
+
+  @@unique([userId, videoId])
+}
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  content     String    @db.Text
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewId    Int
+  review      Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+}
+
+model Download {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videoId     Int
+  video       Video     @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  quality     VideoQuality
+  downloadedAt DateTime @default(now())
+  expiresAt   DateTime? // For DRM/authorized downloads
+
+  @@unique([userId, videoId, quality])
+}
