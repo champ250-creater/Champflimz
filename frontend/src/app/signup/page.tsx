@@ -94,7 +94,7 @@ export default function SignupPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-2 bg-card border border-primary/30 rounded-lg text-text focus:border-primary outline-none transition"
+                  className="w-full px-4 py-2 bg-card border border-primary/30 rounded-lg text-black focus:border-primary outline-none transition"
                   required
                   minLength={6}
                 />
@@ -107,7 +107,7 @@ export default function SignupPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-2 bg-card border border-primary/30 rounded-lg text-white focus:border-primary outline-none transition"
+                  className="w-full px-4 py-2 bg-card border border-primary/30 rounded-lg text-black focus:border-primary outline-none transition"
                   required
                 />
               </div>
