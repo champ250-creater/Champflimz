@@ -55,12 +55,12 @@ export default function LoginPage() {
               <div>
                 <label className="block text-sm font-medium text-text mb-2">{t.email}</label>
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="user@champflimz.com"
-                  className="w-full px-4 py-2 bg-card border border-primary/30 rounded-lg text-white focus:border-primary outline-none transition"
-                  required
+                 type="email"
+                 value={email}
+                 onChange={(e) => setEmail(e.target.value)}
+                 placeholder="user@champflimz.com"
+                 className="w-full px-4 py-2 bg-card border border-primary/30 rounded-lg text-white focus:border-primary outline-none transition"
+                 required
                 />
               </div>
               
@@ -68,9 +68,9 @@ export default function LoginPage() {
                 <label className="block text-sm font-medium text-text mb-2">{t.password}</label>
                 <input
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                 value={password}
+                 onChange={(e) => setPassword(e.target.value)}
+                 placeholder="••••••••"
                   className="w-full px-4 py-2 bg-card border border-primary/30 rounded-lg text-white focus:border-primary outline-none transition"
                   required
                 />
