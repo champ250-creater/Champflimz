@@ -15,6 +15,6 @@ export class AiController {
   @Get('search')
   async smartSearch(@Query('q') query: string) {
     if (!query) return [];
-    return this.aiService.getSmartSearch(query);
+    return this.aiService.semanticSearch(query);
   }
 }
