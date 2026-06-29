@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@repo/ui/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@champflimz/ui';
 import { BarChart, Users, Video, Activity, PlayCircle } from 'lucide-react';
 
 // Mock data for Admin

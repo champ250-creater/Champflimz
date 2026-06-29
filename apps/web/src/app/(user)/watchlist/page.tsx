@@ -1,6 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@repo/ui/components/ui/card';
-import { Button } from '@repo/ui/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent, Button } from '@champflimz/ui';
 import { Bookmark, Play, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
