@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Search, Loader2, Sparkles } from "lucide-react";
-import { Input } from "./ui/input"; // Assuming we will build this
-import { Card } from "./ui/card";
+import { Card } from "@champflimz/ui";
 
 interface SearchResult {
   id: number;
