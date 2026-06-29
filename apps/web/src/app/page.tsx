@@ -26,7 +26,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <p className="text-[color-mix(in_srgb,var(--foreground)_80%,transparent)]">
-              We replaced pure black with warm, subtle undertones that don't strain the eyes, making marathon sessions effortless.
+              We replaced pure black with warm, subtle undertones that don&apos;t strain the eyes, making marathon sessions effortless.
             </p>
           </CardContent>
           <CardFooter>

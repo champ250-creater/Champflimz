@@ -134,7 +134,7 @@ export default function SmartSearch() {
             <div className="p-8 text-center flex flex-col items-center gap-3">
               <Search className="h-8 w-8 text-white/20" />
               <div>
-                <p className="text-sm font-medium text-white">We couldn't find anything for "{query}"</p>
+                <p className="text-sm font-medium text-white">We couldn&apos;t find anything for &quot;{query}&quot;</p>
                 <p className="text-xs text-white/50 mt-1">Try adjusting your semantics</p>
               </div>
             </div>
