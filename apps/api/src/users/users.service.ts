@@ -70,4 +70,46 @@ export class UsersService {
     const { password, ...result } = updatedUser;
     return result;
   }
+
+  // --- Watchlist (MyList) ---
+  
+  async getWatchlist(userId: number) {
+    return this.prisma.myList.findMany({
+      where: { userId },
+      include: { video: true },
+      orderBy: { addedAt: 'desc' }
+    });
+  }
+
+  async addToWatchlist(userId: number, videoId: number) {
+    return this.prisma.myList.upsert({
+      where: { userId_videoId: { userId, videoId } },
+      update: {},
+      create: { userId, videoId }
+    });
+  }
+
+  async removeFromWatchlist(userId: number, videoId: number) {
+    return this.prisma.myList.delete({
+      where: { userId_videoId: { userId, videoId } }
+    });
+  }
+
+  // --- Reviews ---
+
+  async addReview(userId: number, videoId: number, rating: number, content?: string) {
+    return this.prisma.review.upsert({
+      where: { userId_videoId: { userId, videoId } },
+      update: { rating, content },
+      create: { userId, videoId, rating, content }
+    });
+  }
+
+  async getUserReviews(userId: number) {
+    return this.prisma.review.findMany({
+      where: { userId },
+      include: { video: true },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
 }
