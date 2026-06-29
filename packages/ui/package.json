@@ -1,0 +1,12 @@
+{
+  "name": "@champflimz/ui",
+  "version": "2.0.0",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "react": "^19.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0"
+  }
+}
